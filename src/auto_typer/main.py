@@ -1,10 +1,8 @@
 import flet as ft
 import time
 import sys
-from auto_typer.classes.app_state import AppState
+from classes.app_state import AppState
 import threading
-
-
 
 
 def main(page: ft.Page):
@@ -34,8 +32,9 @@ def main(page: ft.Page):
 
     def update_slider_label(e):
         typing_speed_label.current.value = f"auto typing Speed: {int(typing_speed.current.value)} ms"
-        if app_state and app_state.typer:
+        if app_state:
             app_state.speed = int(typing_speed.current.value)
+        if app_state.typer:
             app_state.typer.speed = int(typing_speed.current.value)
         page.update()
 
@@ -67,6 +66,10 @@ def main(page: ft.Page):
     def start_playback(e):
         app_state.play = True
         app_state.initalize_typer()
+        app_state.typer.focus_window()
+        time.sleep(0.25)
+        app_state.play = True
+        app_state.paused = False
         if app_state.text_data and app_state.typer:
             play_button.disabled = True
             resume_button.disabled = True
@@ -74,13 +77,8 @@ def main(page: ft.Page):
             pause_button.disabled = False
             page.update()
             app_state.typer.type_text_tokens()
-            app_state.paused = False
-            app_state.play = False
-            resume_button.disabled = True
-            stop_button.disabled = True
-            play_button.disabled = False
-            app_state.typer = None
-            app_state.initialize_text_data(app_state.source_file_path)
+            print("STOPPED PLAYING")
+        stop_playback(None)
         page.update()
 
     def pause_playback(e):
@@ -116,6 +114,7 @@ def main(page: ft.Page):
         advance_to_next_newline_button.disabled = True
         advance_to_next_token_button.disabled = True
         app_state.typer = None
+        app_state.initialize_text_data(app_state.source_file_path)
         page.update()
 
     def toggle_pause_on_new_line(e):
@@ -145,13 +144,41 @@ def main(page: ft.Page):
         resume_playback(e)
 
     def on_advance_newline_button(e):
-        if app_state.play:
-            app_state.advance_to_newline += 1
-
+        if app_state.typer and app_state.play:
+            app_state.typer.advance_to_newline += 1
 
     def on_advance_token_button(e):
-        if app_state.play:
-            app_state.advance_token += 1
+        if app_state.typer and app_state.play:
+            app_state.typer.advance_token += 1
+
+    def toggle_auto_home_on_newline(e):
+        if auto_home_on_newline_chk_bx.current.value:
+            app_state.auto_home_on_newline = True
+            if app_state.typer:
+                app_state.typer.auto_home_on_newline = True
+        else:
+            app_state.auto_home_on_newline = False
+            if app_state.typer:
+                app_state.typer.auto_home_on_newline = False
+
+    def toggle_control_on_newline(e):
+        if ctrl_on_newline_chk_bx.current.value:
+            app_state.control_on_newline = True
+            if app_state.typer:
+                app_state.typer.control_on_newline = True
+        else:
+            app_state.control_on_newline = False
+            if app_state.typer:
+                app_state.typer.control_on_newline = False
+
+    def toggle_replace_quad_spaces_with_tab(e):
+        if replace_quad_spaces_with_tab_chk_bx.current.value:
+            app_state.replace_quad_spaces_with_tab = True
+        else:
+            app_state.replace_quad_spaces_with_tab = False
+
+
+
 
  
 
@@ -159,6 +186,9 @@ def main(page: ft.Page):
     keep_autotyper_window_on_top_chk_box = ft.Ref[ft.Checkbox]()
     pause_on_new_line_chk_bx = ft.Ref[ft.Checkbox]()
     start_playback_paused_chk_bx = ft.Ref[ft.Checkbox]()
+    auto_home_on_newline_chk_bx = ft.Ref[ft.Checkbox]()
+    ctrl_on_newline_chk_bx = ft.Ref[ft.Checkbox]()
+    replace_quad_spaces_with_tab_chk_bx = ft.Ref[ft.Checkbox]()
 
     typing_speed = ft.Ref[ft.Slider]()
     typing_speed_label = ft.Ref[ft.Text]()
@@ -204,7 +234,12 @@ def main(page: ft.Page):
         ft.Slider(min=100, max=500, divisions=16, ref=typing_speed, on_change=update_slider_label),
         ft.Row([
             ft.Checkbox("auto pause on new line", ref=pause_on_new_line_chk_bx, on_change=toggle_pause_on_new_line, value=False),
-            ft.Checkbox("start playback paused", ref=start_playback_paused_chk_bx, on_change=start_playback_paused, value=False),    
+            ft.Checkbox("start playback paused", ref=start_playback_paused_chk_bx, on_change=start_playback_paused, value=False), 
+        ]),
+        ft.Row([
+            ft.Checkbox("auto home on newline", ref=auto_home_on_newline_chk_bx, on_change=toggle_auto_home_on_newline, value=True),
+            ft.Checkbox("ctrl on newline", ref=ctrl_on_newline_chk_bx, on_change=toggle_control_on_newline, value=True),
+            ft.Checkbox("replace quad spaces with tab", ref=replace_quad_spaces_with_tab_chk_bx, on_change=toggle_replace_quad_spaces_with_tab, value=True),   
         ]),
         ft.Divider(height=1, thickness=4, color="white"),
         ft.Row([
@@ -223,6 +258,14 @@ def main(page: ft.Page):
         ft.Text(value="", max_lines=4, ref=tokens_preview),
     )
 
+    # trigger all the checkbox events at start
+    checkboxes = [chk_bx for chk_bx in page.controls if isinstance(chk_bx, ft.Checkbox)]
+    rows = [row for row in page.controls if isinstance(row, ft.Row)]
+    for row in rows:
+        checkboxes.extend([chk_bx for chk_bx in row.controls if isinstance(chk_bx, ft.Checkbox)])
+    for checkbox in checkboxes:
+        checkbox.on_change(ft.ControlEvent(target=None, name=None, data=None, control=checkbox, page=page))
+
 
     ############################## THREADs ##############################
 
@@ -233,13 +276,9 @@ def main(page: ft.Page):
             "close": bool(app_state.close)
         }
         while not app_state.close:
-
             if app_state.paused != watched_states["paused"]:
                 if app_state.paused:
                     pause_playback(None)
-
-                if app_state.close:
-                    sys.exit()
             
             watched_states = {
                 "paused": app_state.paused,
@@ -248,5 +287,15 @@ def main(page: ft.Page):
             }
             time.sleep(0.01)
     threading.Thread(target=app_state_watcher, args=(app_state,), daemon=True).start()
+
+    ############################ CLEANUP #####################################
+
+    def cleanup(e):
+        app_state.play = False
+        app_state.paused = False
+        app_state.close = True
+        print("closing")
+
+    page.window.on_event = lambda e: cleanup(e) if e.data == "close" else None
 
 ft.app(target=main, view=ft.AppView.FLET_APP_HIDDEN)

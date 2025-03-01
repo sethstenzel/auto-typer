@@ -1,9 +1,8 @@
 import flet as ft
-from classes.window import TargetWindow
-from classes.data import TextData
-from classes.typer import Typer
-from classes.components import AppCoverAlert
-
+from .window import TargetWindow
+from .data import TextData
+from .typer import Typer
+from .components import AppCoverAlert
 
 
 class AppState:
@@ -37,6 +36,7 @@ class AppState:
         # Text Data
         self.source_file_path = None
         self.text_data = None
+        self.replace_quad_spaces_with_tab = False
 
         # Typer Settings
         self.typer= None
@@ -44,9 +44,9 @@ class AppState:
         self.play = False
         self.paused = False
         self.pause_on_new_line = False
-        self.advance_to_newline = 0
-        self.advance_token = 0
         self.start_playback_paused = False
+        self.auto_home_on_newline = False
+        self.control_on_newline = False
 
         # Explosed GUI functions
         self.pause_playback = None # function
@@ -72,12 +72,10 @@ class AppState:
         try:
             with open(file_path,'r') as f:
                 file_data = f.read()
-                self.text_data = TextData(file_data)
+                self.text_data = TextData(file_data, replace_quad_spaces_with_tab=self.replace_quad_spaces_with_tab)
                 self.tokens_preview_list = ['[ ' + str(x) + ' ]' for x in self.text_data.text_tokens]
                 self.tokens_preview.current.value = " ".join(self.tokens_preview_list)
                 self.page.update()
-                
-
         except Exception as e:
             if self.page:        
                 AppCoverAlert(page=self.page, text=f"{e}.", bgcolor="#FFCCCB", color="white", icon=ft.Icon(name=ft.Icons.ERROR))
@@ -93,7 +91,9 @@ class AppState:
                 paused=self.paused,
                 pause_on_window_not_focused=True,
                 start_playback_paused = self.start_playback_paused,
-                app_state=self
+                app_state=self,
+                auto_home_on_newline = self.auto_home_on_newline,
+                control_on_newline = self.control_on_newline
             )
 
     def update_tokens_preview(self):

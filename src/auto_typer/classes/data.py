@@ -37,8 +37,9 @@ class MouseScroll:
 
 class TextData():
 
-    def __init__(self, text_to_type=""):
+    def __init__(self, text_to_type="", replace_quad_spaces_with_tab=False):
         self.original_text_to_type = text_to_type
+        self.replace_quad_spaces_with_tab = replace_quad_spaces_with_tab
         self.text_tokens = self.parse_text_to_tokens(self.original_text_to_type)
 
 
@@ -53,8 +54,10 @@ class TextData():
                 parsed_tokens.append(string_token)
         return parsed_tokens
 
-    
+
     def text_to_string_tokens(self, text):
+        if self.replace_quad_spaces_with_tab:
+            text = text.replace("    ", "\t")    
         text = text.replace(" ", "<<space>>").replace("\n", "<<enter>>")
         tokens = []
 

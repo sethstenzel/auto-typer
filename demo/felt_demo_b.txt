@@ -1,0 +1,37 @@
+import flet as ft
+
+
+def main(page: ft.Page):
+    # App / Window
+    # Functions
+    # UI    
+
+ft.app(main)
+    page.title = "A Flet Demo"
+    page.window.width = 300
+    page.window.height = 300
+    page.window.always_on_top = True
+    page.window.center()
+    def toggle_theme(e):
+        if page.theme_mode == ft.ThemeMode.DARK:
+            page.theme_mode = ft.ThemeMode.LIGHT
+        else:
+            page.theme_mode = ft.ThemeMode.DARK
+        page.update()
+
+    def btn_click(e):
+        if txt_name.value:
+            page.open(ft.SnackBar(ft.Text(f"Hello, {txt_name.value}!")))
+            page.update()
+        else:
+            page.open(ft.SnackBar(ft.Text(f"How mysterious!!!")))
+            page.update()
+
+    txt_name = ft.TextField(label="Your name")
+    page.add(
+        txt_name,
+        ft.ElevatedButton("Say hello!", on_click=btn_click),
+        ft.ElevatedButton("Toggle Theme", on_click=toggle_theme)
+    )
+
+    
