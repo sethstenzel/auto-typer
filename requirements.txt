@@ -1,0 +1,8 @@
+pygetwindow
+pyautogui
+keyboard
+pynput
+pywin32
+pytest
+flet
+auto-py-to-exe

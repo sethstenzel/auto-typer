@@ -1,0 +1,93 @@
+{
+ "version": "auto-py-to-exe-configuration_v1",
+ "pyinstallerOptions": [
+  {
+   "optionDest": "noconfirm",
+   "value": true
+  },
+  {
+   "optionDest": "filenames",
+   "value": "C:/s3711/git/auto-typer/src/auto_typer/main.py"
+  },
+  {
+   "optionDest": "onefile",
+   "value": true
+  },
+  {
+   "optionDest": "console",
+   "value": false
+  },
+  {
+   "optionDest": "icon_file",
+   "value": "C:/s3711/git/auto-typer/src/auto_typer/icon.ico"
+  },
+  {
+   "optionDest": "name",
+   "value": "AutoTyper"
+  },
+  {
+   "optionDest": "clean_build",
+   "value": false
+  },
+  {
+   "optionDest": "strip",
+   "value": false
+  },
+  {
+   "optionDest": "noupx",
+   "value": false
+  },
+  {
+   "optionDest": "disable_windowed_traceback",
+   "value": false
+  },
+  {
+   "optionDest": "uac_admin",
+   "value": false
+  },
+  {
+   "optionDest": "uac_uiaccess",
+   "value": false
+  },
+  {
+   "optionDest": "argv_emulation",
+   "value": false
+  },
+  {
+   "optionDest": "bootloader_ignore_signals",
+   "value": false
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/s3711/git/auto-typer/src/auto_typer/classes;classes/"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "win32gui"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "win32com"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "pywintypes"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "pynput"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "pygetwindow"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "icecream"
+  }
+ ],
+ "nonPyinstallerOptions": {
+  "increaseRecursionLimit": true,
+  "manualArguments": ""
+ }
+}
