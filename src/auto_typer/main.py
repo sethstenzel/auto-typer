@@ -2,22 +2,15 @@ import flet as ft
 import time
 from classes.app_state import AppState
 import threading
+from view.page_setup import page_and_window_setup
 
 
 def main(page: ft.Page):
-    app_state = AppState(page)   
+    app_state = AppState(page)
+    page_and_window_setup(page) 
 
     ############################## WINDOW SETTINGS ##############################
-    page.title = app_state.title
-    page.window.icon = app_state.icon
-    page.window.width = app_state.width
-    page.window.height = app_state.height   
-    page.window.always_on_top = app_state.always_on_top
-    page.window.resizable = app_state.resizable
-    
-    page.window.center()
-    page.window.visible = True
-    page.update()
+
 
     ############################## FUNCTIONS ##############################
     def select_target_app_btn_clk(e):
@@ -293,9 +286,9 @@ def main(page: ft.Page):
         app_state.play = False
         app_state.paused = False
         app_state.close = True
-        print("closing")
         time.sleep(0.5)
-
+        page.window.destroy()
+    page.window.prevent_close = True
     page.window.on_event = lambda e: cleanup(e) if e.data == "close" else None
 
 ft.app(target=main, view=ft.AppView.FLET_APP_HIDDEN)

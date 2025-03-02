@@ -1,0 +1,4 @@
+from option import Option
+def notify_of_option_change(option_name, option_value):
+    changed_option = Option(name=option_name, value=option_value)
+    
