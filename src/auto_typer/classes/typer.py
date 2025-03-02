@@ -71,6 +71,9 @@ class Typer:
                         time.sleep(self.speed/1000)
                         kb.release(getattr(Key, token.key))
                         kb.release(Key.ctrl)
+                    elif token.key == "atpause":
+                        self.paused = True
+                        self.app_state.paused = True
                     else:
                         kb.press(getattr(Key, token.key))
                         time.sleep(self.speed/1000)
@@ -87,7 +90,6 @@ class Typer:
                         self.paused = True
                         self.app_state.paused = True
                     token_completed = True
-
 
             elif isinstance(token, TimedPause):
                 if self.check_window_focused(pause_if_not=True):

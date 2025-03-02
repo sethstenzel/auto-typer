@@ -1,6 +1,5 @@
 import flet as ft
 import time
-import sys
 from classes.app_state import AppState
 import threading
 
@@ -277,7 +276,7 @@ def main(page: ft.Page):
         }
         while not app_state.close:
             if app_state.paused != watched_states["paused"]:
-                if app_state.paused:
+                if app_state.paused and app_state.play:
                     pause_playback(None)
             
             watched_states = {
@@ -295,6 +294,7 @@ def main(page: ft.Page):
         app_state.paused = False
         app_state.close = True
         print("closing")
+        time.sleep(0.5)
 
     page.window.on_event = lambda e: cleanup(e) if e.data == "close" else None
 
