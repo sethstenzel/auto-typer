@@ -1,6 +1,6 @@
 # auto-typer
 A utility for auto typing a source file in a controlled way.
-Intended use is for helping those trying to teach coding videos.
+Intended use is for helping those trying to teach coding  via recorded video.
 
 <<YT Video here soon>>
 
